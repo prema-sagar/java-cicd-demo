@@ -27,11 +27,11 @@ jobs:
         with:
           gradle-version: '8.5'
 
-      - name: Build and run tests
-        run: gradle test jacocoTestReport --no-daemon
+      - name: Build and run tests with coverage
+        run: gradle clean test jacocoTestReport --no-daemon
 
       - name: SonarCloud Scan & Quality Gate
-        run: gradle sonar --no-daemon
+        run: gradle sonar -Dsonar.gradle.skipCompile=true --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -60,17 +60,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.5'
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
