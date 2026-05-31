@@ -1,0 +1,32 @@
+name: Claude PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Claude AI Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            You are a senior Java engineer. Review this PR for:
+            - Bugs and null pointer risks
+            - Security vulnerabilities (hardcoded secrets, SQL injection)
+            - Code quality and optimization
+            - Missing error handling
+            - Performance issues
+            Post inline comments on specific lines.
+            End with: APPROVED / NEEDS CHANGES / CRITICAL ISSUES
